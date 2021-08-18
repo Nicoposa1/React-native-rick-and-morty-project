@@ -1,39 +1,51 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, FlatList, ImageBackground } from 'react-native'
-import axios from 'axios'
+import { Query } from 'react-apollo'
+import { gql } from 'apollo-boost'
 
-export default function Home(){
+const CharacterQuery = () => {
+    return (
+      <Query query={gql`{
+        characters{
+          results{
+            id
+            name
+            image
+          }
+        }
+      }`}>
+      {
+        ({ loading, error, data }) => {
+          if(loading) return <Text>Loading...</Text>;
+          if(error) return <Text>Error :(</Text>
 
-  const [ characterList, setCharacterList ] = useState([])
+            return (
+              <FlatList
+                data={data.characters.results}
+                renderItem={(({ item, index }) => {
+                  return(
+                    <View style={styles.container} >
+                      <ImageBackground source={{ uri: item.image }} style={styles.characterImage}/>
+                      <Text key={index}>{item.name}</Text>
+                    </View>
+                  )
+                })}
+              />
+            )
+        }
+      }
+      </Query>
+    )
+  }
 
-  useEffect(() => {
-    axios
-      .get('https://rickandmortyapi.com/api/character/')
-      .then(response => {
-        setCharacterList(response.data.results)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  })
-
-  return(
+  const renderCharacters = () => {
+    return (
     <View>
       <Text style={styles.title}>Rick and Morty</Text>
-      <FlatList 
-        data={characterList}
-        renderItem={({ item, index }) => {
-          return(
-            <View style={styles.container}>
-                <ImageBackground source={{ uri: item.image }} style={styles.characterImage}/>
-                <Text key={index}>{item.name}</Text>
-            </View>
-          )
-        }}
-      />
+      <CharacterQuery />
     </View>
-  )
-}
+    )
+  }
 
 const styles = StyleSheet.create({
   title: {
@@ -57,3 +69,5 @@ const styles = StyleSheet.create({
     height: 100,
   }
 })
+
+export default renderCharacters
