@@ -20,17 +20,20 @@ const CharacterQuery = () => {
           if(error) return <Text>Error :(</Text>
 
             return (
-              <FlatList
-                data={data.characters.results}
-                renderItem={(({ item, index }) => {
-                  return(
-                    <View style={styles.container} >
-                      <ImageBackground source={{ uri: item.image }} style={styles.characterImage}/>
-                      <Text key={index}>{item.name}</Text>
-                    </View>
-                  )
-                })}
-              />
+              <View style={styles.listContainer} >
+                <FlatList
+                  data={data.characters.results}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={(({ item }) => {
+                    return(
+                      <View style={styles.container} >
+                        <ImageBackground source={{ uri: item.image }} style={styles.characterImage}/>
+                        <Text>{item.name}</Text>
+                      </View>
+                    )
+                  })}
+                />
+              </View>
             )
         }
       }
@@ -40,9 +43,12 @@ const CharacterQuery = () => {
 
   const renderCharacters = () => {
     return (
-    <View>
+    <View style={styles.listContainer}>
       <Text style={styles.title}>Rick and Morty</Text>
       <CharacterQuery />
+      <View style={styles.buttonsContainer}>
+
+      </View>
     </View>
     )
   }
@@ -59,14 +65,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: 20,
-    paddingRight: 20,
+    marginLeft: 20,
+    marginRight: 20,
     marginBottom: 20,
-    backgroundColor: '#b2b2b2'
+    borderWidth: 1,
+    borderColor: '#000',
   },  
   characterImage: {
     width: 100,
     height: 100,
+  },
+  listContainer:{
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+
+    elevation: 10,
   }
 })
 
